@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.example.demo.mapper.GrpMapper">
+	<select id="getList"
+		resultType="com.example.demo.vo.GrpVO">
+		SELECT * FROM dbdb
+	</select>
+	<select id="getData"
+		resultType="com.example.demo.vo.DataVO">
+		SELECT * FROM gyunggi
+	</select>
+	
+	<select id="location"
+		resultType="com.example.demo.vo.DataVO" parameterType="com.example.demo.vo.DataVO">
+		SELECT * FROM ${location} where dt=#{date}
+	</select>
+</mapper>
