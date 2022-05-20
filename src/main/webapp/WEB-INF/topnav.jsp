@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 	<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
 		<!-- Navbar Brand-->
@@ -7,6 +8,13 @@
 			id="sidebarToggle" href="#!">
 			<i class="fas fa-bars"></i>
 		</button>
+			<div class="collapse navbar-collapse" id="myNavbar">
+			    <div style="text-align: right; float: right;">
+			       <ul class="nav navbar-nav navbar-right">
+			        	<li><a href="/ppt">ppt</a></li>
+					</ul>
+				</div>
+		  </div>
 		<!-- Navbar Search-->
 		<form
 			class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
@@ -27,11 +35,15 @@
 					class="fas fa-user fa-fw"></i></a>
 				<ul class="dropdown-menu dropdown-menu-end"
 					aria-labelledby="navbarDropdown">
-					<li><a class="dropdown-item" href="#!">Settings</a></li>
 					<li>
 						<c:set value="${phone}" var="phone"/>
 						<c:if test="${phone!=null}">
 							<a class="dropdown-item" href="/update">password</a>
+						</c:if>
+					</li>
+					<li>
+						<c:if test="${uid!=null}">
+							<a class="dropdown-item" href="/mypage/bbs_list/1">마이페이지</a>
 						</c:if>
 					</li>
 					<li><hr class="dropdown-divider" /></li>

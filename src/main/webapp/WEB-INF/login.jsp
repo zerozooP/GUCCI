@@ -47,16 +47,16 @@
                                     <div class="card-body">
                                         <form id="loginform" onsubmit="return login();">
                                             <div class="form-floating mb-3">
-                                                <input class="form-control" name="uid" id="uid" type="text" placeholder="ID" />
+                                                <input class="form-control" name="uid" id="uid" type="text" value="박영주님" placeholder="ID" />
                                                 <label for="inputEmail">ID</label>
                                             </div>
                                             <div class="form-floating mb-3">
-                                                <input class="form-control" name="pwd" id="pwd" type="password" placeholder="Password" />
+                                                <input class="form-control" name="pwd" id="pwd" type="password" value="12341234" placeholder="Password" />
                                                 <label for="inputPassword">Password</label>
                                             </div>
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                                 <a class="small" href="/findpw">비밀번호 찾기</a>
-                                                <div><a class="small" href="/bbs_list/1">비회원 게시판 이용하기</a></div>
+                                                <div><a class="small" href="/bbs_list/1/all">비회원 게시판 이용하기</a></div>
                                                 
                                             </div>
                                         

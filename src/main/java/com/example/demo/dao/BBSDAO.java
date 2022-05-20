@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -53,11 +54,12 @@ public class BBSDAO {
 			int bno = fileMapper.readLastBno();
 			vo.setNum(bno+1);
 		}
-		
+		// 오라클 클라우드에서 mybatis가 오류가 발생하여
+		// <foreach>사용이 제한되어 반복문으로 insert 함
 		List<FileVO> fileList = fileUtils.uploadFiles(files, vo.getNum());
 		if (CollectionUtils.isEmpty(fileList) == false) {
-			for(int i=0; i<fileList.size(); i++) { 						// 오라클 클라우드에서 mybatis가 오류가 발생하여
-				queryResult = fileMapper.insertAttach(fileList.get(i));	// <foreach>사용이 어려워서 하나씩 insert 함
+			for(int i=0; i<fileList.size(); i++) { 						
+				queryResult = fileMapper.insertAttach(fileList.get(i));	
 			}
 			
 			if (queryResult < 1) {
@@ -71,13 +73,11 @@ public class BBSDAO {
 	public int add(BBSVO vo) {
 		String uid = (String)session.getAttribute("uid");
 		String email = (String)session.getAttribute("email");
-		
 	    LocalTime seoulNow = LocalTime.now(ZoneId.of("Asia/Seoul"));
 	    LocalDate dateNow = LocalDate.now(ZoneId.of("Asia/Seoul"));
 	    System.out.println(dateNow);
 	    int seoulHour = seoulNow.getHour();
 	    int seoulminute = seoulNow.getMinute();
-
 	    String date = dateNow.toString() +" "+ seoulHour +":" +seoulminute;
 	    
 		vo.setUid(uid);
@@ -97,12 +97,15 @@ public class BBSDAO {
 		PageInfo<BBSVO> pageInfo = new PageInfo<>();
 		if(ctgr.equals("all")) {
 		    pageInfo = new PageInfo<>(m.getAllList());
+		} else if(ctgr.equals("mypage")) {
+			String uid = (String) session.getAttribute("uid"); 
+			pageInfo = new PageInfo<>(m.getMyList(uid));
 		} else {
 			pageInfo = new PageInfo<>(m.getList(ctgr));
 		}
 	    return pageInfo;
 	}
-
+	
 	public int incrementCnt(int num) {
 		return m.updateCnt(num);
 	}
@@ -145,4 +148,51 @@ public class BBSDAO {
 		return fileMapper.selectAttachDetail(idx);
 	}
 
+	public PageInfo<ReplyVO> getCmtList(int pageNum, int pageSize, String uid) {
+		PageHelper.startPage(pageNum, pageSize);
+		
+		PageInfo<ReplyVO> pageInfo = new PageInfo<>();
+		
+		pageInfo = new PageInfo<>(m.getMyCmtList(uid));
+		
+		return pageInfo;
+	}
+
+	public List<BBSVO> listTitle(List<Integer> bno) {
+		List<BBSVO> bbs = new ArrayList<>();
+		for(int i=0; i<bno.size(); i++) {
+			bbs.add(m.detail(bno.get(i)));
+		}
+		return bbs;
+	}
+
+	public PageInfo<BBSVO> getReplyList(int pageNum, int pageSize, String uid) {
+		PageHelper.startPage(pageNum, pageSize);
+		
+		PageInfo<BBSVO> pageInfo = new PageInfo<>();
+		
+		pageInfo = new PageInfo<>(m.getMyReplyList(uid));
+		
+		return pageInfo;
+	}
+
+	public PageInfo<BBSVO> getMyLikeList(int pageNum, int pageSize, String uid) {
+		PageHelper.startPage(pageNum, pageSize);
+		
+		PageInfo<BBSVO> pageInfo = new PageInfo<>();
+		
+		pageInfo = new PageInfo<>(m.getMyLikeList(uid));
+		
+		return pageInfo;
+	}
+	
+	public PageInfo<BBSVO> getMyDelList(int pageNum, int pageSize) {
+		PageHelper.startPage(pageNum, pageSize);
+		
+		PageInfo<BBSVO> pageInfo = new PageInfo<>();
+		
+		pageInfo = new PageInfo<>(m.getMyDelList());
+		
+		return pageInfo;
+	}
 }

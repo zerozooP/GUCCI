@@ -18,4 +18,9 @@ public interface BBSXMLMapper {
 	int delete(int num);
 	List<ReplyVO> selectReply(int num);
 	int updateCnt(int num);
+	List<BBSVO> getMyList(String uid);
+	List<ReplyVO> getMyCmtList(String uid);
+	List<BBSVO> getMyReplyList(String uid);
+	List<BBSVO> getMyLikeList(String uid);
+	List<BBSVO> getMyDelList();
 }

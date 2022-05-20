@@ -30,6 +30,26 @@ public class BBSSVC {
 	public boolean add(BBSVO vo) {
 		return dao.add(vo)>0;
 	}
+	
+	public PageInfo<ReplyVO> getCmtList(int pageNum, int pageSize, String uid) {
+		return dao.getCmtList(pageNum, pageSize, uid);
+	}
+	
+	public List<BBSVO> listTitle(List<Integer> bno) {
+		return dao.listTitle(bno);
+	}
+	
+	public PageInfo<BBSVO> getReplyList(int pageNum, int pageSize, String uid) {
+		return dao.getReplyList(pageNum, pageSize, uid);
+	}
+	
+	public PageInfo<BBSVO> getMyLikeList(int pageNum, int pageSize, String uid) {
+		return dao.getMyLikeList(pageNum, pageSize, uid);
+	}
+	
+	public PageInfo<BBSVO> getMyDelList(int pageNum, int pageSize) {
+		return dao.getMyDelList(pageNum, pageSize);
+	}
 
 	public PageInfo<BBSVO> getList(int pageNum, int pageSize, String ctgr) {
 		return dao.getList(pageNum, pageSize, ctgr);
@@ -59,5 +79,8 @@ public class BBSSVC {
 	public boolean delete(int num) {
 		return dao.delete(num)>0;
 	}
+
+
+	
 
 }

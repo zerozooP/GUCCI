@@ -50,44 +50,80 @@
 						<h2 class="text-center" id="ctgr"></h2>
 						<br>
 						<br>
-						<table class="table table-hover table-striped text-center" style="border: 1px solid;">
-							<thead>
-								<tr>
-									<th class="col-2">번호</th>
-									<th class="col-4">제목</th>
-									<th class="col-2">글쓴이</th>
-									<th class="col-2">작성일</th>
-									<th class="col-1">조회</th>
-									<th class="col-1">좋아요</th>
-								</tr>
-							</thead>
-							<tbody class="list">
-								<c:set value="${category}" var="category"/>
-								<c:forEach items="${pageInfo.list}" var="list">
-									<c:if test="${list.category==category}">
+						<c:choose>
+							<c:when test="${category=='all'}">
+								<table class="table table-hover table-striped text-center" style="border: 1px solid;">
+									<thead>
 										<tr>
-											<td>${list.num}</td>
-											<td><a href="/bbs_detail/${list.num}/${category}">${list.title} [${list.reply}]</a></td>
-											<td>${list.uid}</td>
-											<td>${list.date}</td>
-											<td>${list.cnt}</td>
-											<td>${list.liked}</td>
+											<th class="col-1">번호</th>
+											<th class="col-2">분류</th>
+											<th class="col-3">제목</th>
+											<th class="col-2">글쓴이</th>
+											<th class="col-2">작성일</th>
+											<th class="col-1">조회</th>
+											<th class="col-1">좋아요</th>
 										</tr>
-									</c:if>
-									<c:if test="${category=='all'}">
+									</thead>
+									<tbody class="list">
+										<c:set value="${category}" var="category"/>
+										<c:forEach items="${pageInfo.list}" var="list">
+												<tr>
+													<td>${list.num}</td>
+													<td>
+														<c:if test="${list.category =='FreeBoard'}">
+															자유게시판
+														</c:if>
+														<c:if test="${list.category =='meetingLog'}">
+															회의록
+														</c:if>
+														<c:if test="${list.category =='something'}">
+															something
+														</c:if>
+													</td>
+													<td><a href="/bbs_detail/${list.num}/${category}">${list.title} [${list.reply}]</a></td>
+													<td>${list.uid}</td>
+													<td>${list.date}</td>
+													<td>${list.cnt}</td>
+													<td>${list.liked}</td>
+												</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+							</c:when>
+							
+							<c:otherwise>
+								<table class="table table-hover table-striped text-center" style="border: 1px solid;">
+									<thead>
 										<tr>
-											<td>${list.num}</td>
-											<td><a href="/bbs_detail/${list.num}/${category}">${list.title} [${list.reply}]</a></td>
-											<td>${list.uid}</td>
-											<td>${list.date}</td>
-											<td>${list.cnt}</td>
-											<td>${list.liked}</td>
+											<th class="col-2">번호</th>
+											<th class="col-4">제목</th>
+											<th class="col-2">글쓴이</th>
+											<th class="col-2">작성일</th>
+											<th class="col-1">조회</th>
+											<th class="col-1">좋아요</th>
 										</tr>
-									</c:if>
-								</c:forEach>
-							</tbody>
-						</table>
-						<nav aria-label="Page navigation example">
+									</thead>
+									<tbody class="list">
+										<c:set value="${category}" var="category"/>
+										<c:forEach items="${pageInfo.list}" var="list">
+											<c:if test="${list.category==category}">
+												<tr>
+													<td>${list.num}</td>
+													<td><a href="/bbs_detail/${list.num}/${category}">${list.title} [${list.reply}]</a></td>
+													<td>${list.uid}</td>
+													<td>${list.date}</td>
+													<td>${list.cnt}</td>
+													<td>${list.liked}</td>
+												</tr>
+											</c:if>
+										</c:forEach>
+									</tbody>
+								</table>
+							</c:otherwise>
+						</c:choose>
+						<button type="button" class="btn btn-outline-primary" onclick="bbs_add('${uid}');">글쓰기</button>
+					</div>
+					<nav aria-label="Page navigation example">
 							<ul class="pagination justify-content-center">
 							   	<c:forEach var="i" items="${pageInfo.navigatepageNums}">
 							      	<c:choose>
@@ -101,9 +137,6 @@
 							   	</c:forEach>
 						   	</ul>
 						</nav>
-						<br>
-						<button type="button" class="btn btn-outline-primary" onclick="bbs_add('${uid}');">글쓰기</button>
-					</div>
 				</main>
 				<jsp:include page="/WEB-INF/footer.jsp"></jsp:include>
 			</div>

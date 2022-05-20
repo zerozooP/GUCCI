@@ -27,7 +27,9 @@ public class FileUtils {
 
 	/** 업로드 경로 */
 	private final String uploadPath = Paths.get("C:", "develop", "upload", today).toString();
-
+	
+//	private final String uploadPath = Paths.get("/opt", "tomcat9", "webapps", "ROOT", "WEB-INF", "classes",
+//									"static", "upload").toString();
 	/**
 	 * 서버에 생성할 파일명을 처리할 랜덤 문자열 반환
 	 * @return 랜덤 문자열
@@ -48,6 +50,7 @@ public class FileUtils {
 		List<FileVO> attachList = new ArrayList<>();
 
 		/* uploadPath에 해당하는 디렉터리가 존재하지 않으면, 부모 디렉터리를 포함한 모든 디렉터리를 생성 */
+		System.out.println("파일 저장된 경로 ="+uploadPath);
 		File dir = new File(uploadPath);
 		if (dir.exists() == false) {
 			dir.mkdirs();

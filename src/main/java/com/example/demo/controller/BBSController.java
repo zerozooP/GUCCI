@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import com.example.demo.service.BBSSVC;
 import com.example.demo.service.UserSVC;
 import com.example.demo.vo.BBSVO;
 import com.example.demo.vo.FileVO;
+import com.example.demo.vo.ReplyVO;
 import com.github.pagehelper.PageInfo;
 import com.google.gson.JsonObject;
 
@@ -47,6 +49,58 @@ public class BBSController {
 	
 	@Autowired
 	private BBSSVC svc;
+	
+	@GetMapping("/ppt")
+	public String ppt() {
+		return "ppt";
+	}
+	
+	@GetMapping("/mypage/{page}/{pgNum}")
+	public String mypage(@PathVariable("page")String page, @PathVariable("pgNum")int pg, Model m) {
+		
+		if(login.isLogin()) {
+			String uid = (String) session.getAttribute("uid");
+			
+			if(page.equals("bbs_list")) {
+				String ctgr = "mypage";
+				PageInfo<BBSVO> pgInfo = svc.getList(pg, 5, ctgr);
+				m.addAttribute("pageInfo", pgInfo);
+				return "mypage_bbs_list";
+				
+			} else if(page.equals("bbs_cmt")) {
+				PageInfo<ReplyVO> pgInfo = svc.getCmtList(pg, 5, uid);
+				List<Integer> bno = new ArrayList<>();
+				for(int i=0; i<pgInfo.getList().size(); i++) {
+					bno.add(pgInfo.getList().get(i).getBno());
+				}
+				m.addAttribute("pageInfo", pgInfo);
+				m.addAttribute("bbs", svc.listTitle(bno));
+				return "mypage_bbs_cmt";
+				
+			} else if(page.equals("bbs_reply")) {
+				PageInfo<BBSVO> pgInfo = svc.getReplyList(pg, 5, uid);
+				m.addAttribute("pageInfo", pgInfo);
+				return "mypage_bbs_reply";
+				
+			} else if(page.equals("bbs_like")) {
+				PageInfo<BBSVO> pgInfo = svc.getMyLikeList(pg, 5, uid);
+				m.addAttribute("pageInfo", pgInfo);
+				return "mypage_bbs_like";
+				
+			} else if(page.equals("bbs_delete")) {
+				PageInfo<BBSVO> pgInfo = svc.getMyDelList(pg, 5);
+				m.addAttribute("pageInfo", pgInfo);
+				return "mypage_bbs_delete";
+			}
+			
+			
+		} else {
+			return "redirect:/login";
+		}
+		return null;
+	}
+	
+
 	
 	
 	@PostMapping("/bbs_delete/{num}")
@@ -90,13 +144,14 @@ public class BBSController {
 				
 		String savedFileName = UUID.randomUUID() + extension;	//저장될 파일 명
 		
-		File targetFile = new File(fileRoot + savedFileName);	
+		File targetFile = new File(fileRoot + savedFileName);
 		
 		try {
 			InputStream fileStream = multipartFile.getInputStream();
 			FileUtils.copyInputStreamToFile(fileStream, targetFile);	//파일 저장
 			jsonObject.addProperty("url", "/summernoteImage/"+savedFileName);
 			jsonObject.addProperty("responseCode", "success");
+			System.out.println(jsonObject);
 				
 		} catch (IOException e) {
 			FileUtils.deleteQuietly(targetFile);	//저장된 파일 삭제
@@ -109,7 +164,7 @@ public class BBSController {
 	
 	@GetMapping("/bbs_download/{idx}")
 	public void downloadAttachFile(@PathVariable("idx")long idx, Model model, HttpServletResponse response) {
-
+		// 게시글번호(idx)를 가지고 파일정보를 가져옴
 		FileVO fileInfo = svc.getAttachDetail(idx);
 		if (fileInfo == null || "Y".equals(fileInfo.getDeleteYn())) {
 			throw new RuntimeException("파일 정보를 찾을 수 없습니다.");
@@ -117,17 +172,21 @@ public class BBSController {
 
 		String uploadDate = fileInfo.getInsertTime().format(DateTimeFormatter.ofPattern("yyMMdd"));
 		String uploadPath = Paths.get("C:", "develop", "upload", uploadDate).toString();
+		
+//		String uploadPath = Paths.get("/opt", "tomcat9", "webapps", "ROOT", "WEB-INF", "classes",
+//										"static", "upload").toString();
 
 		String filename = fileInfo.getOriginalName();
 		File file = new File(uploadPath, fileInfo.getSaveName());
-
+		System.out.println("file = " + file.getPath());
 		try {
 			byte[] data = FileUtils.readFileToByteArray(file);
+			System.out.println("data = "+data.toString());
 			response.setContentType("application/octet-stream");
 			response.setContentLength(data.length);
 			response.setHeader("Content-Transfer-Encoding", "binary");
-			response.setHeader("Content-Disposition", "attachment; fileName=\"" + URLEncoder.encode(filename, "UTF-8") + "\";");
-
+			response.setHeader("Content-Disposition", "attachment; fileName=\"" + 
+								URLEncoder.encode(filename, "UTF-8") + "\";");
 			response.getOutputStream().write(data);
 			response.getOutputStream().flush();
 			response.getOutputStream().close();

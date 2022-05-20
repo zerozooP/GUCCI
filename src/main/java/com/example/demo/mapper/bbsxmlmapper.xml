@@ -4,6 +4,43 @@
         
 <mapper namespace="com.example.demo.mapper.BBSXMLMapper">
 
+	<select id="getMyDelList"
+		resultType="com.example.demo.vo.BBSVO">
+		SELECT * FROM bbs WHERE deleteYn='Y'ORdER BY num DESC
+	</select>
+	
+	<select id="getMyLikeList"
+		resultType="com.example.demo.vo.BBSVO">
+		SELECT b.num, b.uid, b.title, b.content, b.date, b.cnt, b.reply, b.liked FROM bbs b LEFT JOIN bbs_like l
+		ON (b.num = l.bno)
+		WHERE l.like_uid=#{uid} AND b.deleteYn = 'N'
+		ORdER BY b.num DESC
+	</select>
+	
+	<select id="getMyReplyList"
+		resultType="com.example.demo.vo.BBSVO">
+		SELECT DISTINCT b.num, b.uid, b.title, b.content, b.date, b.cnt, b.reply, b.liked FROM bbs b LEFT JOIN bbs_comment c
+		ON (b.num = c.bno)
+		WHERE c.uid=#{uid} AND c.grp is not null AND b.deleteYn = 'N'
+		ORdER BY b.num DESC
+	</select>
+
+
+	<select id="getMyCmtList"
+		resultType="com.example.demo.vo.ReplyVO">
+		SELECT c.rno, c.bno, c.grp, c.grps, c.uid, c.cmt, c.repDate FROM bbs_comment c LEFT JOIN bbs
+		ON (c.bno = bbs.num)
+		WHERE c.uid=#{uid} AND c.cmt!="" AND c.grp is null AND bbs.deleteYn = 'N'
+		ORDER BY c.rno DESC
+	</select>
+
+	<select id="getMyList"
+		resultType="com.example.demo.vo.BBSVO">
+		SELECT * FROM bbs
+		WHERE deleteYn="N" AND uid=#{uid}
+		ORDER BY num DESC
+	</select>
+
 	<update id="delete"	parameterType="Integer">
 		UPDATE bbs 
 		SET deleteYn="Y"
